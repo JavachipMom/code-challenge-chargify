@@ -1,7 +1,10 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 
+// Something is not going right and would need clarity. I looked up certain documentation on what I need to do but it is still a little unclear what happened.
 
+// A couple of styles done to dress up the form a little bit with Chargify
+// colors
 const styles = {
   fontFamily: 'fantasy',
   color: 'darkGray',
@@ -69,6 +72,7 @@ const styles = {
 // Need function for the error messages
   showInputError(refName) {
     const validity = this.refs[refName].validity;
+    // Having trouble trying to get this part to work without it effecting the confirmPasswordLabel
     const label = document.getElementById(`${refName}Label`).textContent;
     const error = document.getElementById(`${refName}Error`);
     const isPassword = refName.indexOf('password') !== -1;
