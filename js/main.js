@@ -11,49 +11,55 @@ const styles = {
   textAlign: 'center',
   backgroundColor: 'lightGreen',
   borderRadius: '12px',
-  opacity: '.9'
+  opacity: '.9',
+  width: '125%',
 };
 
- class ReactForm extends React.Component {
+class ReactForm extends React.Component {
 
-// My thought process is to first identify the state of each value for Email, Password, Confirm Password, and Company Type.
-   constructor(props) {
-     super(props);
-     this.state = {
-       email: '',
-       password: '',
-       passwordConfirm: '',
-       company: '',
-     };
+  // My thought process is to first identify the state of each value for Email, Password, Confirm Password, and Company Type.
+  constructor(props) {
+    super(props);
 
-     this.handleChange = this.handleChange.bind(this);
-     this.handleSubmit = this.handleSubmit.bind(this);
-   }
+    this.state = {
+      email: '',
+      password: '',
+      passwordConfirm: '',
+      company: '',
+    };
 
-   handleChange(e) {
-     e.target.classList.add('active');
+    this.handleChange = this.handleChange.bind(this);
+    this.handleSubmit = this.handleSubmit.bind(this);
+  }
 
-     this.setState({
-       [e.target.name]: e.target.value
-     });
+  handleChange(e) {
+    e.target.classList.add('active');
 
-     this.showInputError(e.target.name);
-   }
+    this.setState({
+      [e.target.name]: e.target.value,
+    });
 
-   handleSubmit(e) {
-     e.preventDefault();
-// console.log the information input for fields
-     console.log('component state', JSON.stringify(this.state));
+    this.showInputError(e.target.name);
+  }
 
-     if (!this.showFormErrors()) {
-       window.alert('Your form was invalid and was not processed!! Please try again!');
-     } else {
-      // Show alert window for the client to see the form was valid and submitted
-       window.alert('Your form is submitted!!');
-     }
-   }
+  handleSubmit(e) {
+    e.preventDefault();
+    // console.log the information input for fields
+    console.log('component state', JSON.stringify(this.state));
 
-    showFormErrors() {
+    if (!this.showFormErrors()) {
+      console.log('form is invalid: do not submit');
+    } else {
+      console.log('form is valid: submit');
+      window.alert('Form was submitted successfully!');
+    }
+  }
+
+  company(e) {
+    this.setState({ company: e.target.value });
+  }
+  // Need function for the error messages
+  showFormErrors() {
     const inputs = document.querySelectorAll('input');
     let isFormValid = true;
 
@@ -69,26 +75,25 @@ const styles = {
 
     return isFormValid;
   }
-// Need function for the error messages
+
   showInputError(refName) {
     const validity = this.refs[refName].validity;
-    // Having trouble trying to get this part to work without it effecting the confirmPasswordLabel
     const label = document.getElementById(`${refName}Label`).textContent;
     const error = document.getElementById(`${refName}Error`);
     const isPassword = refName.indexOf('password') !== -1;
     const isPasswordConfirm = refName === 'passwordConfirm';
 
-// Need if statement to compare the password fields to make sure they match
+    // Need if statement to compare the password fields to make sure they match
 
     if (isPasswordConfirm) {
       if (this.refs.password.value !== this.refs.passwordConfirm.value) {
         this.refs.passwordConfirm.setCustomValidity('Passwords do not match');
       } else {
-        this.refs.passwordConfirm.setCustomValidity('Passwords match');
+        this.refs.passwordConfirm.setCustomValidity('');
       }
     }
 
-// Need if statements to make sure the fields are valid
+    // Need if statements to make sure the fields are valid
 
     if (!validity.valid) {
       if (validity.valueMissing) {
@@ -110,57 +115,62 @@ const styles = {
   render() {
     return (
       <div style={styles}>
-        <h2>Simple React Form</h2><br />
-        <form onSubmit={ this.handleSubmit }>
-          <label id="emailLabel">Email: </label>
+        <h1>Simple React Form</h1>
+        <form noValidate>
+          <div className="form-group">
+            <label id="emailLabel">Email: </label>
             <input
-            name="email"
-            type="email"
-            ref="email"
-            value={ this.state.email }
-            onChange={ this.handleChange }
-            placeholder="Email Address"
-            required
+              className="form-control"
+              type="email"
+              name="email"
+              ref="email"
+              value={this.state.email}
+              onChange={this.handleChange}
+              required
             />
-          <div className="error" id="emailError" />
-          <br />
-          <label id="passwordLabel">Password: </label>
+            <div className="error" id="emailError" />
+          </div>
+          <div className="form-group">
+            <label id="passwordLabel">Password: </label>
             <input
-            name="password"
-            type="password"
-            ref="password"
-            pattern=".{5,}"
-            value={ this.state.password }
-            onChange={ this.handleChange }
-            placeholder="Password"
-            required
+              className="form-control"
+              type="password"
+              name="password"
+              ref="password"
+              value={this.state.password}
+              onChange={this.handleChange}
+              pattern=".{5,}"
+              required
             />
-          <div className="error" id="passwordError" />
-          <br />
-          <label id="confirmPasswordLabel">Confirm Password: </label>
+            <div className="error" id="passwordError" />
+          </div>
+          <div className="form-group">
+            <label id="passwordConfirmLabel">Confirm Password: </label>
             <input
-            name="passwordConfirm"
-            type="password"
-            ref="passwordConfirm"
-            value={ this.state.passwordConfirm }
+              className="form-control"
+              type="password"
+              name="passwordConfirm"
+              ref="passwordConfirm"
+              value={this.state.passwordConfirm}
+              onChange={this.handleChange}
+              required
+            />
+            <div className="error" id="passwordConfirmError" />
+          </div>
+          <label> Company: </label><br />
+          <select
+            name="company"
+            ref="company"
+            value={this.state.company}
             onChange={this.handleChange}
-            placeholder="Confirm password"
-            required
-            />
-          <div className="error"
-               id="passwordConfirmError" />
-          <br />
-          <label>Company: </label>
-          <select name="company"
-                  ref="company"
-                  value={ this.state.company }
-                  onChange={ this.handleChange }>
+          >
             <option value="SAAS">SAAS</option>
             <option value="Box-a-Month">Box-a-Month</option>
             <option value="Physical Goods">Physical Goods</option>
-          </select>
-          <input type="submit"
-                 value="Submit"/>
+          </select><br />
+          <button className="btn btn-primary" onClick={this.handleSubmit}>
+            submit
+          </button>
         </form>
       </div>
     );
